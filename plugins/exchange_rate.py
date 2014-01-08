@@ -22,14 +22,14 @@ class Exchanger(threading.Thread):
         self.lock = threading.Lock()
         self.is_running = False
 
-    def exchange(self, btc_amount, quote_currency):
+    def exchange(self, doge_amount, quote_currency):
         with self.lock:
             if self.quote_currencies is None:
                 return None
             quote_currencies = self.quote_currencies.copy()
         if quote_currency not in quote_currencies:
             return None
-        return btc_amount * quote_currencies[quote_currency]
+        return doge_amount * quote_currencies[quote_currency]
 
     def stop(self):
         self.is_running = False
@@ -98,12 +98,12 @@ class Plugin(BasePlugin):
         self.win.emit(SIGNAL("refresh_currencies()"))
         self.win.emit(SIGNAL("refresh_currencies_combo()"))
 
-    def set_quote_text(self, btc_balance, r):
-        r[0] = self.create_quote_text(Decimal(btc_balance) / 100000000)
+    def set_quote_text(self, doge_balance, r):
+        r[0] = self.create_quote_text(Decimal(doge_balance) / 100000000)
 
-    def create_quote_text(self, btc_balance):
+    def create_quote_text(self, doge_balance):
         quote_currency = self.config.get("currency", "EUR")
-        quote_balance = self.exchanger.exchange(btc_balance, quote_currency)
+        quote_balance = self.exchanger.exchange(doge_balance, quote_currency)
         if quote_balance is None:
             quote_text = ""
         else:

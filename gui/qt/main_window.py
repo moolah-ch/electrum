@@ -538,7 +538,7 @@ class ShuttleWindow(QMainWindow):
 
     def base_unit(self):
         assert self.decimal_point in [5,8]
-        return "BTC" if self.decimal_point == 8 else "mBTC"
+        return "DOGE" if self.decimal_point == 8 else "mDOGE"
 
 
     def update_status(self):
@@ -960,7 +960,7 @@ class ShuttleWindow(QMainWindow):
         address, amount, label, message, signature, identity, url = util.parse_url(url)
 
         try:
-            if amount and self.base_unit() == 'mBTC': amount = str( 1000* Decimal(amount))
+            if amount and self.base_unit() == 'mDOGE': amount = str( 1000* Decimal(amount))
             elif amount: amount = str(Decimal(amount))
         except Exception:
             amount = "0.0"
@@ -2085,7 +2085,7 @@ class ShuttleWindow(QMainWindow):
         if not self.config.is_modifiable('fee_per_kb'):
             for w in [fee_e, fee_label]: w.setEnabled(False)
 
-        units = ['BTC', 'mBTC']
+        units = ['DOGE', 'mDOGE']
         unit_label = QLabel(_('Base unit') + ':')
         grid.addWidget(unit_label, 3, 0)
         unit_combo = QComboBox()
@@ -2093,7 +2093,7 @@ class ShuttleWindow(QMainWindow):
         unit_combo.setCurrentIndex(units.index(self.base_unit()))
         grid.addWidget(unit_combo, 3, 1)
         grid.addWidget(HelpButton(_('Base unit of your wallet.')\
-                                             + '\n1BTC=1000mBTC.\n' \
+                                             + '\n1DOGE=1000mDOGE.\n' \
                                              + _(' This settings affects the fields in the Send tab')+' '), 3, 2)
 
         usechange_cb = QCheckBox(_('Use change addresses'))
@@ -2141,7 +2141,7 @@ class ShuttleWindow(QMainWindow):
 
         unit_result = units[unit_combo.currentIndex()]
         if self.base_unit() != unit_result:
-            self.decimal_point = 8 if unit_result == 'BTC' else 5
+            self.decimal_point = 8 if unit_result == 'DOGE' else 5
             self.config.set_key('decimal_point', self.decimal_point, True)
             self.update_history_tab()
             self.update_status()

@@ -176,7 +176,7 @@ class MiniWindow(QDialog):
 
         self.actuator = actuator
         self.config = config
-        self.btc_balance = None
+        self.doge_balance = None
         self.quote_currencies = ["BRL", "CNY", "EUR", "GBP", "RUB", "USD"]
         self.actuator.set_configured_currency(self.set_quote_currency)
 
@@ -388,21 +388,21 @@ class MiniWindow(QDialog):
         self.refresh_balance()
 
     def refresh_balance(self):
-        if self.btc_balance is None:
+        if self.doge_balance is None:
             # Price has been discovered before wallet has been loaded
             # and server connect... so bail.
             return
-        self.set_balances(self.btc_balance)
+        self.set_balances(self.doge_balance)
         self.amount_input_changed(self.amount_input.text())
 
-    def set_balances(self, btc_balance):
+    def set_balances(self, doge_balance):
         """Set the dogecoin balance and update the amount label accordingly."""
-        self.btc_balance = btc_balance
-        quote_text = self.create_quote_text(btc_balance)
+        self.doge_balance = doge_balance
+        quote_text = self.create_quote_text(doge_balance)
         if quote_text:
             quote_text = "(%s)" % quote_text
 
-        amount = self.actuator.g.format_amount(btc_balance)
+        amount = self.actuator.g.format_amount(doge_balance)
         unit = self.actuator.g.base_unit()
 
         self.balance_label.set_balance_text(amount, unit, quote_text)
@@ -424,12 +424,12 @@ class MiniWindow(QDialog):
             else:
                 self.balance_label.show_balance()
 
-    def create_quote_text(self, btc_balance):
+    def create_quote_text(self, doge_balance):
         """Return a string copy of the amount fiat currency the 
         user has in dogecoins."""
         from shuttle.plugins import run_hook
         r = {}
-        run_hook('set_quote_text', btc_balance, r)
+        run_hook('set_quote_text', doge_balance, r)
         return r.get(0,'')
 
     def send(self):
@@ -448,7 +448,7 @@ class MiniWindow(QDialog):
         # self.address_input.property(...) returns a qVariant, not a bool.
         # The == is needed to properly invoke a comparison.
         if (self.address_input.property("isValid") == True and
-            value is not None and 0 < value <= self.btc_balance):
+            value is not None and 0 < value <= self.doge_balance):
             self.send_button.setDisabled(False)
         else:
             self.send_button.setDisabled(True)
@@ -742,9 +742,9 @@ class MiniActuator:
             password = None
 
         fee = 0
-        # 0.1 BTC = 10000000
+        # 0.1 DOGE = 10000000
         if amount < dogecoin(1) / 10:
-            # 0.001 BTC
+            # 0.001 DOGE
             fee = dogecoin(1) / 1000
 
         try:
