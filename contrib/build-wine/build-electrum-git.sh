@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # You probably need to update only this link
-ELECTRUM_GIT_URL=git://github.com/spesmilo/electrum.git
+ELECTRUM_GIT_URL=git://github.com/spesmilo/shuttle.git
 BRANCH=master
-NAME_ROOT=electrum
+NAME_ROOT=shuttle
 
 # These settings probably don't need any change
-export WINEPREFIX=/opt/wine-electrum
+export WINEPREFIX=/opt/wine-shuttle
 PYHOME=c:/python26
 PYTHON="wine $PYHOME/python.exe -OO -B"
 
@@ -16,11 +16,11 @@ set -e
 
 cd tmp
 
-if [ -d "electrum-git" ]; then
+if [ -d "shuttle-git" ]; then
     # GIT repository found, update it
     echo "Pull"
 
-    cd electrum-git
+    cd shuttle-git
     git pull
     cd ..
 
@@ -28,42 +28,42 @@ else
     # GIT repository not found, clone it
     echo "Clone"
 
-    git clone -b $BRANCH $ELECTRUM_GIT_URL electrum-git
+    git clone -b $BRANCH $ELECTRUM_GIT_URL shuttle-git
 fi
 
-cd electrum-git
+cd shuttle-git
 COMMIT_HASH=`git rev-parse HEAD | awk '{ print substr($1, 0, 11) }'`
 echo "Last commit: $COMMIT_HASH"
 cd ..
 
 
-rm -rf $WINEPREFIX/drive_c/electrum
-cp -r electrum-git $WINEPREFIX/drive_c/electrum
-cp electrum-git/LICENCE .
+rm -rf $WINEPREFIX/drive_c/shuttle
+cp -r shuttle-git $WINEPREFIX/drive_c/shuttle
+cp shuttle-git/LICENCE .
 
 # Build Qt resources
-wine $WINEPREFIX/drive_c/Python26/Lib/site-packages/PyQt4/pyrcc4.exe C:/electrum/icons.qrc -o C:/electrum/lib/icons_rc.py
+wine $WINEPREFIX/drive_c/Python26/Lib/site-packages/PyQt4/pyrcc4.exe C:/shuttle/icons.qrc -o C:/shuttle/lib/icons_rc.py
 
-# Copy ZBar libraries to electrum
-#cp "$WINEPREFIX/drive_c/Program Files (x86)/ZBar/bin/"*.dll "$WINEPREFIX/drive_c/electrum/"
+# Copy ZBar libraries to shuttle
+#cp "$WINEPREFIX/drive_c/Program Files (x86)/ZBar/bin/"*.dll "$WINEPREFIX/drive_c/shuttle/"
 
 cd ..
 
 rm -rf dist/
 
 # For building standalone compressed EXE, run:
-$PYTHON "C:/pyinstaller/pyinstaller.py" --noconfirm --ascii -w --onefile "C:/electrum/electrum"
+$PYTHON "C:/pyinstaller/pyinstaller.py" --noconfirm --ascii -w --onefile "C:/shuttle/shuttle"
 
 # For building uncompressed directory of dependencies, run:
 $PYTHON "C:/pyinstaller/pyinstaller.py" --noconfirm --ascii -w deterministic.spec
 
 # For building NSIS installer, run:
-wine "$WINEPREFIX/drive_c/Program Files (x86)/NSIS/makensis.exe" electrum.nsi
-#wine $WINEPREFIX/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe electrum.nsis
+wine "$WINEPREFIX/drive_c/Program Files (x86)/NSIS/makensis.exe" shuttle.nsi
+#wine $WINEPREFIX/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe shuttle.nsis
 
 DATE=`date +"%Y%m%d"`
 cd dist
-mv electrum.exe $NAME_ROOT-$DATE-$COMMIT_HASH.exe
-mv electrum $NAME_ROOT-$DATE-$COMMIT_HASH
-mv electrum-setup.exe $NAME_ROOT-$DATE-$COMMIT_HASH-setup.exe
+mv shuttle.exe $NAME_ROOT-$DATE-$COMMIT_HASH.exe
+mv shuttle $NAME_ROOT-$DATE-$COMMIT_HASH
+mv shuttle-setup.exe $NAME_ROOT-$DATE-$COMMIT_HASH-setup.exe
 zip -r $NAME_ROOT-$DATE-$COMMIT_HASH.zip $NAME_ROOT-$DATE-$COMMIT_HASH

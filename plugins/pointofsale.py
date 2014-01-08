@@ -8,10 +8,10 @@ from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 import PyQt4.QtGui as QtGui
 
-from electrum_gui.qt.qrcodewidget import QRCodeWidget
+from shuttle_gui.qt.qrcodewidget import QRCodeWidget
 
-from electrum import bmp, pyqrnative, BasePlugin
-from electrum.i18n import _
+from shuttle import bmp, pyqrnative, BasePlugin
+from shuttle.i18n import _
 
 
 if platform.system() == 'Windows':
@@ -28,7 +28,7 @@ class QR_Window(QWidget):
     def __init__(self, exchanger):
         QWidget.__init__(self)
         self.exchanger = exchanger
-        self.setWindowTitle('Electrum - '+_('Invoice'))
+        self.setWindowTitle('Shuttle - '+_('Invoice'))
         self.setMinimumSize(800, 250)
         self.address = ''
         self.label = ''
@@ -86,7 +86,7 @@ class QR_Window(QWidget):
         label_text = "<span style='font-size: 21pt'>%s</span>" % label if label else ""
         self.label_label.setText(label_text)
 
-        msg = 'bitcoin:'+self.address
+        msg = 'dogecoin:'+self.address
         if self.amount is not None:
             msg += '?amount=%s'%(str( self.amount))
             if self.label is not None:

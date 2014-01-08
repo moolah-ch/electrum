@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2013 ecdsa@github
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from electrum.i18n import _
+from shuttle.i18n import _
 from util import *
 
 

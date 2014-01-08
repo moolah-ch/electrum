@@ -7,9 +7,9 @@ import json
 import threading
 import re
 from decimal import Decimal
-from electrum.plugins import BasePlugin
-from electrum.i18n import _
-from electrum_gui.qt.util import *
+from shuttle.plugins import BasePlugin
+from shuttle.i18n import _
+from shuttle_gui.qt.util import *
 
 
 class Exchanger(threading.Thread):

@@ -7,16 +7,16 @@ from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 import PyQt4.QtGui as QtGui
 
-from electrum import bmp, pyqrnative
-from electrum.i18n import _
+from shuttle import bmp, pyqrnative
+from shuttle.i18n import _
 
-from electrum import util
+from shuttle import util
 
 ALIAS_REGEXP = '^(|([\w\-\.]+)@)((\w[\w\-]+\.)+[\w\-]+)$'    
 
 
 
-from electrum.plugins import BasePlugin
+from shuttle.plugins import BasePlugin
 
 class Plugin(BasePlugin):
 
@@ -96,9 +96,9 @@ class Plugin(BasePlugin):
         m1 = re.match('([\w\-\.]+)@((\w[\w\-]+\.)+[\w\-]+)', alias)
         m2 = re.match('((\w[\w\-]+\.)+[\w\-]+)', alias)
         if m1:
-            url = 'https://' + m1.group(2) + '/bitcoin.id/' + m1.group(1) 
+            url = 'https://' + m1.group(2) + '/dogecoin.id/' + m1.group(1) 
         elif m2:
-            url = 'https://' + alias + '/bitcoin.id'
+            url = 'https://' + alias + '/dogecoin.id'
         else:
             return ''
         try:
@@ -128,7 +128,7 @@ class Plugin(BasePlugin):
             EC_KEY.verify_message(previous, signature, "alias:%s:%s"%(alias,target))
 
         if not is_valid(target):
-            raise ValueError("Invalid bitcoin address")
+            raise ValueError("Invalid dogecoin address")
 
         return target, signing_addr, auth_name
 

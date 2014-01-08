@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2012 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,13 +17,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys, time, datetime, re, threading
-from electrum.i18n import _
-from electrum.util import print_error, print_msg
+from shuttle.i18n import _
+from shuttle.util import print_error, print_msg
 import os.path, json, ast, traceback
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from electrum import DEFAULT_SERVERS, DEFAULT_PORTS
+from shuttle import DEFAULT_SERVERS, DEFAULT_PORTS
 
 from util import *
 
@@ -72,8 +72,8 @@ class NetworkDialog(QDialog):
         hbox.addWidget(l)
         hbox.addWidget(QLabel(status))
         hbox.addStretch(50)
-        msg = _("Electrum sends your wallet addresses to a single server, in order to receive your transaction history.") + "\n\n" \
-            + _("In addition, Electrum connects to several nodes in order to download block headers and find out the longest blockchain.") + " " \
+        msg = _("Shuttle sends your wallet addresses to a single server, in order to receive your transaction history.") + "\n\n" \
+            + _("In addition, Shuttle connects to several nodes in order to download block headers and find out the longest blockchain.") + " " \
             + _("This blockchain is used to verify the transactions sent by the address server.")
         hbox.addWidget(HelpButton(msg))
         vbox.addLayout(hbox)
@@ -104,8 +104,8 @@ class NetworkDialog(QDialog):
         self.autocycle_cb.setChecked(self.config.get('auto_cycle', True))
         grid.addWidget(self.autocycle_cb, 0, 1)
         if not self.config.is_modifiable('auto_cycle'): self.autocycle_cb.setEnabled(False)
-        msg = _("If auto-connect is enabled, Electrum will always use a server that is on the longest blockchain.") + " " \
-            + _("If it is disabled, Electrum will warn you if your server is lagging.")
+        msg = _("If auto-connect is enabled, Shuttle will always use a server that is on the longest blockchain.") + " " \
+            + _("If it is disabled, Shuttle will warn you if your server is lagging.")
         grid.addWidget(HelpButton(msg), 0, 4)
 
         grid.addWidget(self.server_host, 0, 2, 1, 2)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2011 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@
 from __future__ import absolute_import
 import android
 
-from electrum import SimpleConfig, Wallet, WalletStorage, format_satoshis, mnemonic_encode, mnemonic_decode
-from electrum.bitcoin import is_valid
-from electrum import util
+from shuttle import SimpleConfig, Wallet, WalletStorage, format_satoshis, mnemonic_encode, mnemonic_decode
+from shuttle.dogecoin import is_valid
+from shuttle import util
 from decimal import Decimal
 import datetime, re
 
@@ -165,8 +165,8 @@ def make_layout(s, scrollable = False):
         android:background="#ff222222">
 
         <TextView
-          android:id="@+id/textElectrum"
-          android:text="Electrum"
+          android:id="@+id/textShuttle"
+          android:text="Shuttle"
           android:textSize="7pt"
           android:textColor="#ff4444ff"
           android:gravity="left"
@@ -453,7 +453,7 @@ def pay_to(recipient, amount, fee, label):
     else:
         password = None
 
-    droid.dialogCreateSpinnerProgress("Electrum", "signing transaction...")
+    droid.dialogCreateSpinnerProgress("Shuttle", "signing transaction...")
     droid.dialogShow()
 
     try:
@@ -487,7 +487,7 @@ def make_new_contact():
     if r:
         data = r['extras']['SCAN_RESULT']
         if data:
-            if re.match('^bitcoin:', data):
+            if re.match('^dogecoin:', data):
                 address, _, _, _, _, _, _ = util.parse_url(data)
             elif is_valid(data):
                 address = data
@@ -561,7 +561,7 @@ def main_loop():
                 if receive_addr:
                     amount = modal_input('Amount', 'Amount you want receive. ', '', "numberDecimal")
                     if amount:
-                        receive_addr = 'bitcoin:%s?amount=%s'%(receive_addr, amount)
+                        receive_addr = 'dogecoin:%s?amount=%s'%(receive_addr, amount)
 
                 if not receive_addr:
                     out = None
@@ -595,7 +595,7 @@ def payto_loop():
                 amount = droid.fullQueryDetail('amount').result.get('text')
 
                 if not is_valid(recipient):
-                    modal_dialog('Error','Invalid Bitcoin address')
+                    modal_dialog('Error','Invalid Dogecoin address')
                     continue
 
                 try:
@@ -618,7 +618,7 @@ def payto_loop():
                 if r:
                     data = r['extras']['SCAN_RESULT']
                     if data:
-                        if re.match('^bitcoin:', data):
+                        if re.match('^dogecoin:', data):
                             payto, amount, label, _, _, _, _ = util.parse_url(data)
                             droid.fullSetProperty("recipient", "text",payto)
                             droid.fullSetProperty("amount", "text", amount)
@@ -884,7 +884,7 @@ menu_commands = ["send", "receive", "settings", "contacts", "main"]
 wallet = None
 network = None
 
-class ElectrumGui:
+class ShuttleGui:
 
     def __init__(self, config, _network):
         global wallet, network
@@ -1009,7 +1009,7 @@ class ElectrumGui:
     def restore_wallet(self):
 
         msg = "recovering wallet..."
-        droid.dialogCreateSpinnerProgress("Electrum", msg)
+        droid.dialogCreateSpinnerProgress("Shuttle", msg)
         droid.dialogShow()
 
         wallet.restore(lambda x: None)

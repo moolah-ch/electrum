@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2012 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys, time, datetime, re, threading
-from electrum.i18n import _, set_language
-from electrum.util import print_error, print_msg, parse_url
-from electrum.plugins import run_hook
+from shuttle.i18n import _, set_language
+from shuttle.util import print_error, print_msg, parse_url
+from shuttle.plugins import run_hook
 import os.path, json, ast, traceback
 import shutil
 
@@ -33,9 +33,9 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 
-from electrum import WalletStorage, Wallet
-from electrum.i18n import _
-from electrum.bitcoin import MIN_RELAY_TX_FEE
+from shuttle import WalletStorage, Wallet
+from shuttle.i18n import _
+from shuttle.dogecoin import MIN_RELAY_TX_FEE
 
 try:
     import icons_rc
@@ -43,8 +43,8 @@ except Exception:
     sys.exit("Error: Could not import icons_rc.py, please generate it with: 'pyrcc4 icons.qrc -o gui/qt/icons_rc.py'")
 
 from util import *
-from main_window import ElectrumWindow
-from electrum.plugins import init_plugins
+from main_window import ShuttleWindow
+from shuttle.plugins import init_plugins
 
 class Timer(QtCore.QThread):
     def run(self):
@@ -65,7 +65,7 @@ class OpenFileEventFilter(QObject):
         return False
 
 
-class ElectrumGui:
+class ShuttleGui:
 
     def __init__(self, config, network, app=None):
         self.network = network
@@ -92,7 +92,7 @@ class ElectrumGui:
             wallet = Wallet(storage)
             wallet.start_threads(self.network)
             
-        self.main_window = w = ElectrumWindow(self.config, self.network)
+        self.main_window = w = ShuttleWindow(self.config, self.network)
 
         # plugins that need to change the GUI do it here
         run_hook('init')

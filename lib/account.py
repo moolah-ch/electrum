@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2013 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from bitcoin import *
+from dogecoin import *
 from transaction import Transaction
 
 class Account(object):

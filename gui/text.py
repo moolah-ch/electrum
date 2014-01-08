@@ -2,15 +2,15 @@ import curses, datetime, locale
 from decimal import Decimal
 _ = lambda x:x
 #from i18n import _
-from electrum.util import format_satoshis, set_verbosity
-from electrum.bitcoin import is_valid
+from shuttle.util import format_satoshis, set_verbosity
+from shuttle.dogecoin import is_valid
 
-from electrum import Wallet, WalletStorage
+from shuttle import Wallet, WalletStorage
 
 import tty, sys
 
 
-class ElectrumGui:
+class ShuttleGui:
 
     def __init__(self, config, network):
 
@@ -18,7 +18,7 @@ class ElectrumGui:
         self.network = network
         storage = WalletStorage(config)
         if not storage.file_exists:
-            print "Wallet not found. try 'electrum create'"
+            print "Wallet not found. try 'shuttle create'"
             exit()
 
         self.wallet = Wallet(storage)
@@ -287,7 +287,7 @@ class ElectrumGui:
 
     def do_send(self):
         if not is_valid(self.str_recipient):
-            self.show_message(_('Invalid Bitcoin address'))
+            self.show_message(_('Invalid Dogecoin address'))
             return
         try:
             amount = int( Decimal( self.str_amount) * 100000000 )

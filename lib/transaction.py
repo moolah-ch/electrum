@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2011 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,13 +20,13 @@
 # Note: The deserialization code originally comes from ABE.
 
 
-from bitcoin import *
+from dogecoin import *
 from util import print_error
 import time
 import struct
 
 #
-# Workalike python implementation of Bitcoin's CDataStream class.
+# Workalike python implementation of Dogecoin's CDataStream class.
 #
 import struct
 import StringIO
@@ -65,7 +65,7 @@ class BCDataStream(object):
         # 0 to 252 :  1-byte-length followed by bytes (if any)
         # 253 to 65,535 : byte'253' 2-byte-length followed by bytes
         # 65,536 to 4,294,967,295 : byte '254' 4-byte-length followed by bytes
-        # ... and the Bitcoin client is coded to understand:
+        # ... and the Dogecoin client is coded to understand:
         # greater than 4,294,967,295 : byte '255' 8-byte-length followed by bytes of string
         # ... but I don't think it actually handles any strings that big.
         if self.input is None:
@@ -187,11 +187,11 @@ class Enumeration:
         return self.reverseLookup[value]
 
 
-# This function comes from bitcointools, bct-LICENSE.txt.
+# This function comes from dogecointools, bct-LICENSE.txt.
 def long_hex(bytes):
     return bytes.encode('hex_codec')
 
-# This function comes from bitcointools, bct-LICENSE.txt.
+# This function comes from dogecointools, bct-LICENSE.txt.
 def short_hex(bytes):
     t = bytes.encode('hex_codec')
     if len(t) < 11:
@@ -354,7 +354,7 @@ def get_address_from_output_script(bytes):
     if match_decoded(decoded, match):
         return True, public_key_to_bc_address(decoded[0][1])
 
-    # Pay-by-Bitcoin-address TxOuts look like:
+    # Pay-by-Dogecoin-address TxOuts look like:
     # DUP HASH160 20 BYTES:... EQUALVERIFY CHECKSIG
     match = [ opcodes.OP_DUP, opcodes.OP_HASH160, opcodes.OP_PUSHDATA4, opcodes.OP_EQUALVERIFY, opcodes.OP_CHECKSIG ]
     if match_decoded(decoded, match):
@@ -698,7 +698,7 @@ class Transaction:
 
 
     def requires_fee(self, verifier):
-        # see https://en.bitcoin.it/wiki/Transaction_fees
+        # see https://en.dogecoin.it/wiki/Transaction_fees
         threshold = 57600000
         size = len(self.raw)/2
         if size >= 10000: 

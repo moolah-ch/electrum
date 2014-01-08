@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2011 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ import Queue
 import time
 
 from util import print_msg, print_error, format_satoshis
-from bitcoin import *
+from dogecoin import *
 from account import *
 from transaction import Transaction
 from plugins import run_hook
@@ -101,7 +101,7 @@ class WalletStorage:
         new_path = os.path.join(config.path, "wallets", "default_wallet")
 
         # default path in pre 1.9 versions
-        old_path = os.path.join(config.path, "electrum.dat")
+        old_path = os.path.join(config.path, "shuttle.dat")
         if os.path.exists(old_path) and not os.path.exists(new_path):
             os.rename(old_path, new_path)
 
@@ -155,7 +155,7 @@ class Wallet:
     def __init__(self, storage):
 
         self.storage = storage
-        self.electrum_version = ELECTRUM_VERSION
+        self.shuttle_version = ELECTRUM_VERSION
         self.gap_limit_for_change = 3 # constant
 
         # saved fields
@@ -327,11 +327,11 @@ class Wallet:
         
         #try:
         #    mnemonic.mn_decode(words)
-        #    uses_electrum_words = True
+        #    uses_shuttle_words = True
         #except Exception:
-        #    uses_electrum_words = False
+        #    uses_shuttle_words = False
         #
-        #if uses_electrum_words and len(words) != 13:
+        #if uses_shuttle_words and len(words) != 13:
         #    self.seed_version = 4
         #    self.seed = mnemonic.mn_decode(words)
         #else:

@@ -1,4 +1,4 @@
-from electrum.i18n import _
+from shuttle.i18n import _
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import os.path
@@ -30,7 +30,7 @@ def waiting_dialog(f, w=None):
     if not w:
         w = QDialog()
         w.resize(200, 70)
-        w.setWindowTitle('Electrum')
+        w.setWindowTitle('Shuttle')
     else:
         if w.layout(): QWidget().setLayout(w.layout())
 

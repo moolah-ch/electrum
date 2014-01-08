@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import time, electrum
+import time, shuttle
 
-electrum.set_verbosity(False)     # default is True
-network = electrum.Network({'auto_cycle':True})
-network.register_callback('peers',lambda: electrum.print_json(network.irc_servers.keys()))
+shuttle.set_verbosity(False)     # default is True
+network = shuttle.Network({'auto_cycle':True})
+network.register_callback('peers',lambda: shuttle.print_json(network.irc_servers.keys()))
 
 if not network.start(wait=True):
     print "Not connected"

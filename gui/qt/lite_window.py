@@ -8,37 +8,37 @@ try:
     import PyQt4.QtCore as QtCore
 
 except ImportError:
-    print "You need to have PyQT installed to run Electrum in graphical mode."
+    print "You need to have PyQT installed to run Shuttle in graphical mode."
     print "If you have pip installed try 'sudo pip install pyqt' if you are on Debian/Ubuntu try 'sudo apt-get install python-qt4'."
     sys.exit(0)
 
 from decimal import Decimal as D
-from electrum.util import get_resource_path as rsrc
-from electrum.bitcoin import is_valid
-from electrum.i18n import _
+from shuttle.util import get_resource_path as rsrc
+from shuttle.dogecoin import is_valid
+from shuttle.i18n import _
 import decimal
 import json
 import os.path
 import random
 import re
 import time
-from electrum.wallet import Wallet, WalletStorage
+from shuttle.wallet import Wallet, WalletStorage
 import webbrowser
 import history_widget
 import receiving_widget
-from electrum import util
+from shuttle import util
 import csv 
 import datetime
 
-from electrum.version import ELECTRUM_VERSION as electrum_version
-from electrum.util import format_satoshis, age
+from shuttle.version import ELECTRUM_VERSION as shuttle_version
+from shuttle.util import format_satoshis, age
 
-from main_window import ElectrumWindow
+from main_window import ShuttleWindow
 import shutil
 
 from util import *
 
-bitcoin = lambda v: v * 100000000
+dogecoin = lambda v: v * 100000000
 
 def IconButton(filename, parent=None):
     pixmap = QPixmap(filename)
@@ -91,7 +91,7 @@ def load_theme_paths():
 def csv_transaction(wallet):
     try:
         select_export = _('Select file to export your wallet transactions to')
-        fileName = QFileDialog.getSaveFileName(QWidget(), select_export, os.path.expanduser('~/electrum-history.csv'), "*.csv")
+        fileName = QFileDialog.getSaveFileName(QWidget(), select_export, os.path.expanduser('~/shuttle-history.csv'), "*.csv")
         if fileName:
             with open(fileName, "w+") as csvfile:
                 transaction = csv.writer(csvfile)
@@ -129,7 +129,7 @@ def csv_transaction(wallet):
                     transaction.writerow([tx_hash, label, confirmations, value_string, fee_string, balance_string, time_string])
                 QMessageBox.information(None,_("CSV Export created"), _("Your CSV export has been successfully created."))
     except (IOError, os.error), reason:
-        export_error_label = _("Electrum was unable to produce a transaction export.")
+        export_error_label = _("Shuttle was unable to produce a transaction export.")
         QMessageBox.critical(None,_("Unable to create csv"), export_error_label + "\n" + str(reason))
 
 
@@ -188,9 +188,9 @@ class MiniWindow(QDialog):
         self.balance_label.setObjectName("balance_label")
 
 
-        # Bitcoin address code
+        # Dogecoin address code
         self.address_input = QLineEdit()
-        self.address_input.setPlaceholderText(_("Enter a Bitcoin address or contact"))
+        self.address_input.setPlaceholderText(_("Enter a Dogecoin address or contact"))
         self.address_input.setObjectName("address_input")
 
         self.address_input.setFocusPolicy(Qt.ClickFocus)
@@ -301,8 +301,8 @@ class MiniWindow(QDialog):
         show_hist = self.config.get("gui_show_receiving",False)
         self.toggle_receiving_layout(show_hist)
         
-        self.setWindowIcon(QIcon(":icons/electrum.png"))
-        self.setWindowTitle("Electrum")
+        self.setWindowIcon(QIcon(":icons/shuttle.png"))
+        self.setWindowTitle("Shuttle")
         self.setWindowFlags(Qt.Window|Qt.MSWindowsFixedSizeDialogHint)
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
         self.setObjectName("main_window")
@@ -396,7 +396,7 @@ class MiniWindow(QDialog):
         self.amount_input_changed(self.amount_input.text())
 
     def set_balances(self, btc_balance):
-        """Set the bitcoin balance and update the amount label accordingly."""
+        """Set the dogecoin balance and update the amount label accordingly."""
         self.btc_balance = btc_balance
         quote_text = self.create_quote_text(btc_balance)
         if quote_text:
@@ -406,10 +406,10 @@ class MiniWindow(QDialog):
         unit = self.actuator.g.base_unit()
 
         self.balance_label.set_balance_text(amount, unit, quote_text)
-        self.setWindowTitle("Electrum %s - %s %s" % (electrum_version, amount, unit))
+        self.setWindowTitle("Shuttle %s - %s %s" % (shuttle_version, amount, unit))
 
     def amount_input_changed(self, amount_text):
-        """Update the number of bitcoins displayed."""
+        """Update the number of dogecoins displayed."""
         self.check_button_status()
 
         try:
@@ -426,8 +426,8 @@ class MiniWindow(QDialog):
 
     def create_quote_text(self, btc_balance):
         """Return a string copy of the amount fiat currency the 
-        user has in bitcoins."""
-        from electrum.plugins import run_hook
+        user has in dogecoins."""
+        from shuttle.plugins import run_hook
         r = {}
         run_hook('set_quote_text', btc_balance, r)
         return r.get(0,'')
@@ -439,7 +439,7 @@ class MiniWindow(QDialog):
             self.amount_input.setText("")
 
     def check_button_status(self):
-        """Check that the bitcoin address is valid and that something
+        """Check that the dogecoin address is valid and that something
         is entered in the amount before making the send button clickable."""
         try:
             value = D(str(self.amount_input.text())) * (10**self.actuator.g.decimal_point)
@@ -498,7 +498,7 @@ class MiniWindow(QDialog):
 
 
     def the_website(self):
-        webbrowser.open("http://electrum.org")
+        webbrowser.open("http://shuttle.org")
 
 
     def toggle_receiving_layout(self, toggle_state):
@@ -543,7 +543,7 @@ class BalanceLabel(QLabel):
                 
 
     def set_balance_text(self, amount, unit, quote_text):
-        """Set the amount of bitcoins in the gui."""
+        """Set the amount of dogecoins in the gui."""
         if self.state == self.SHOW_CONNECTING:
             self.state = self.SHOW_BALANCE
 
@@ -614,7 +614,7 @@ class ReceivePopup(QDialog):
         self.close()
 
     def setup(self, address):
-        label = QLabel(_("Copied your Bitcoin address to the clipboard!"))
+        label = QLabel(_("Copied your Dogecoin address to the clipboard!"))
         address_display = QLineEdit(address)
         address_display.setReadOnly(True)
         resize_line_edit_width(address_display, address)
@@ -624,7 +624,7 @@ class ReceivePopup(QDialog):
         main_layout.addWidget(address_display)
 
         self.setMouseTracking(True)
-        self.setWindowTitle("Electrum - " + _("Receive Bitcoin payment"))
+        self.setWindowTitle("Shuttle - " + _("Receive Dogecoin payment"))
         self.setWindowFlags(Qt.Window|Qt.FramelessWindowHint|
                             Qt.MSWindowsFixedSizeDialogHint)
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
@@ -641,7 +641,7 @@ class ReceivePopup(QDialog):
 
 class MiniActuator:
     """Initialize the definitions relating to themes and 
-    sending/receiving bitcoins."""
+    sending/receiving dogecoins."""
     
     
     def __init__(self, main_window):
@@ -679,7 +679,7 @@ class MiniActuator:
         """Set the inital fiat currency conversion country (USD/EUR/GBP) in 
         the GUI to what it was set to in the wallet."""
         currency = self.g.config.get('currency')
-        # currency can be none when Electrum is used for the first
+        # currency can be none when Shuttle is used for the first
         # time and no setting has been created yet.
         if currency is not None:
             set_quote_currency(currency)
@@ -705,7 +705,7 @@ class MiniActuator:
         s.start()
         w = QDialog()
         w.resize(200, 70)
-        w.setWindowTitle('Electrum')
+        w.setWindowTitle('Shuttle')
         l = QLabel(_('Sending transaction, please wait.'))
         vbox = QVBoxLayout()
         vbox.addWidget(l)
@@ -721,12 +721,12 @@ class MiniActuator:
 
 
     def send(self, address, amount, parent_window):
-        """Send bitcoins to the target address."""
+        """Send dogecoins to the target address."""
         dest_address = self.fetch_destination(address)
 
         if dest_address is None or not is_valid(dest_address):
             QMessageBox.warning(parent_window, _('Error'), 
-                _('Invalid Bitcoin Address') + ':\n' + address, _('OK'))
+                _('Invalid Dogecoin Address') + ':\n' + address, _('OK'))
             return False
 
         amount = D(unicode(amount)) * (10*self.g.decimal_point)
@@ -743,9 +743,9 @@ class MiniActuator:
 
         fee = 0
         # 0.1 BTC = 10000000
-        if amount < bitcoin(1) / 10:
+        if amount < dogecoin(1) / 10:
             # 0.001 BTC
-            fee = bitcoin(1) / 1000
+            fee = dogecoin(1) / 1000
 
         try:
             tx = self.g.wallet.mktx([(dest_address, amount)], password, fee)

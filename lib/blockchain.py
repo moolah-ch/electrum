@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2012 thomasv@ecdsa.org
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 import threading, time, Queue, os, sys, shutil
 from util import user_dir, appdata_dir, print_error
-from bitcoin import *
+from dogecoin import *
 
 
 class Blockchain(threading.Thread):
@@ -32,7 +32,7 @@ class Blockchain(threading.Thread):
         self.lock = threading.Lock()
         self.local_height = 0
         self.running = False
-        self.headers_url = 'http://headers.electrum.org/blockchain_headers'
+        self.headers_url = 'http://headers.shuttle.org/blockchain_headers'
         self.set_local_height()
         self.queue = Queue.Queue()
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2011 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -26,18 +26,18 @@ import pygtk
 pygtk.require('2.0')
 import gtk, gobject
 from decimal import Decimal
-from electrum.util import print_error
-from electrum.bitcoin import is_valid
-from electrum import mnemonic, pyqrnative, WalletStorage, Wallet
+from shuttle.util import print_error
+from shuttle.dogecoin import is_valid
+from shuttle import mnemonic, pyqrnative, WalletStorage, Wallet
 
 gtk.gdk.threads_init()
-APP_NAME = "Electrum"
+APP_NAME = "Shuttle"
 import platform
 MONOSPACE_FONT = 'Lucida Console' if platform.system() == 'Windows' else 'monospace'
 
-from electrum.util import format_satoshis
-from electrum.network import DEFAULT_SERVERS
-from electrum.bitcoin import MIN_RELAY_TX_FEE
+from shuttle.util import format_satoshis
+from shuttle.network import DEFAULT_SERVERS
+from shuttle.dogecoin import MIN_RELAY_TX_FEE
 
 def numbify(entry, is_int = False):
     text = entry.get_text().strip()
@@ -88,7 +88,7 @@ def restore_create_dialog():
 
     # ask if the user wants to create a new wallet, or recover from a seed. 
     # if he wants to recover, and nothing is found, do not create wallet
-    dialog = gtk.Dialog("electrum", parent=None, 
+    dialog = gtk.Dialog("shuttle", parent=None, 
                         flags=gtk.DIALOG_MODAL|gtk.DIALOG_NO_SEPARATOR, 
                         buttons= ("create", 0, "restore",1, "cancel",2)  )
 
@@ -267,7 +267,7 @@ def run_network_dialog( network, parent ):
         host_entry.set_text("Not Connected")
     host_entry.show()
     host_box.pack_start(host_entry, False, False, 10)
-    add_help_button(host_box, 'The name, port number and protocol of your Electrum server, separated by a colon. Example: "ecdsa.org:50002:s". Some servers allow you to connect through http (port 80) or https (port 443)')
+    add_help_button(host_box, 'The name, port number and protocol of your Shuttle server, separated by a colon. Example: "ecdsa.org:50002:s". Some servers allow you to connect through http (port 80) or https (port 443)')
     host_box.show()
 
     p_box = gtk.HBox(False, 10)
@@ -461,7 +461,7 @@ gtk.binding_entry_add_signal(MyWindow, gtk.keysyms.W, gtk.gdk.CONTROL_MASK, 'myk
 gtk.binding_entry_add_signal(MyWindow, gtk.keysyms.Q, gtk.gdk.CONTROL_MASK, 'mykeypress', str, 'ctrl+Q')
 
 
-class ElectrumWindow:
+class ShuttleWindow:
 
     def show_message(self, msg):
         show_message(msg, self.window)
@@ -474,7 +474,7 @@ class ElectrumWindow:
         self.num_zeros = int(self.config.get('num_zeros',0))
 
         self.window = MyWindow(gtk.WINDOW_TOPLEVEL)
-        title = 'Electrum ' + self.wallet.electrum_version + '  -  ' + self.config.path
+        title = 'Shuttle ' + self.wallet.shuttle_version + '  -  ' + self.config.path
         if not self.wallet.seed: title += ' [seedless]'
         self.window.set_title(title)
         self.window.connect("destroy", gtk.main_quit)
@@ -741,7 +741,7 @@ class ElectrumWindow:
             self.set_frozen(self.payto_entry,True)
             self.set_frozen(self.amount_entry,True)
             self.set_frozen(self.message_entry,True)
-            self.payto_sig_id.set_text( '      The bitcoin URI was signed by ' + identity )
+            self.payto_sig_id.set_text( '      The dogecoin URI was signed by ' + identity )
         else:
             self.payto_sig.set_visible(False)
 
@@ -795,7 +795,7 @@ class ElectrumWindow:
             to_address = r
 
         if not is_valid(to_address):
-            self.show_message( "invalid bitcoin address:\n"+to_address)
+            self.show_message( "invalid dogecoin address:\n"+to_address)
             return
 
         try:
@@ -1284,7 +1284,7 @@ class ElectrumWindow:
 
     
 
-class ElectrumGui():
+class ShuttleGui():
 
     def __init__(self, config, network):
         self.network = network
@@ -1331,7 +1331,7 @@ class ElectrumGui():
         if action == 'restore':
             self.restore_wallet(wallet)
 
-        w = ElectrumWindow(self.wallet, self.config, self.network)
+        w = ShuttleWindow(self.wallet, self.config, self.network)
         if url: w.set_url(url)
         gtk.main()
 

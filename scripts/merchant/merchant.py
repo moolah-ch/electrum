@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2011 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ import time, thread, sys, socket, os
 import urllib2,json
 import Queue
 import sqlite3
-from electrum import Wallet, WalletStorage, SimpleConfig, Network, set_verbosity
+from shuttle import Wallet, WalletStorage, SimpleConfig, Network, set_verbosity
 set_verbosity(False)
 
 import ConfigParser
@@ -38,9 +38,9 @@ received_url = config.get('callback','received')
 expired_url = config.get('callback','expired')
 cb_password = config.get('callback','password')
 
-wallet_path = config.get('electrum','wallet_path')
-master_public_key = config.get('electrum','mpk')
-master_chain = config.get('electrum','chain')
+wallet_path = config.get('shuttle','wallet_path')
+master_public_key = config.get('shuttle','mpk')
+master_chain = config.get('shuttle','chain')
 
 
 pending_requests = {}
@@ -50,13 +50,13 @@ num = 0
 def check_create_table(conn):
     global num
     c = conn.cursor()
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='electrum_payments';")
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='shuttle_payments';")
     data = c.fetchall()
     if not data: 
-        c.execute("""CREATE TABLE electrum_payments (address VARCHAR(40), amount FLOAT, confirmations INT(8), received_at TIMESTAMP, expires_at TIMESTAMP, paid INT(1), processed INT(1));""")
+        c.execute("""CREATE TABLE shuttle_payments (address VARCHAR(40), amount FLOAT, confirmations INT(8), received_at TIMESTAMP, expires_at TIMESTAMP, paid INT(1), processed INT(1));""")
         conn.commit()
 
-    c.execute("SELECT Count(address) FROM 'electrum_payments'")
+    c.execute("SELECT Count(address) FROM 'shuttle_payments'")
     num = c.fetchone()[0]
     print "num rows", num
 
@@ -180,7 +180,7 @@ if __name__ == '__main__':
         cur = conn.cursor()
 
         # read pending requests from table
-        cur.execute("SELECT address, amount, confirmations FROM electrum_payments WHERE paid IS NULL;")
+        cur.execute("SELECT address, amount, confirmations FROM shuttle_payments WHERE paid IS NULL;")
         data = cur.fetchall()
 
         # add pending requests to the wallet
@@ -204,21 +204,21 @@ if __name__ == '__main__':
             addr = params
             # set paid=1 for received payments
             print "received payment from", addr
-            cur.execute("update electrum_payments set paid=1 where address='%s'"%addr)
+            cur.execute("update shuttle_payments set paid=1 where address='%s'"%addr)
 
         elif cmd == 'request':
             # add a new request to the table.
             addr, amount, confs, minutes = params
-            sql = "INSERT INTO electrum_payments (address, amount, confirmations, received_at, expires_at, paid, processed)"\
+            sql = "INSERT INTO shuttle_payments (address, amount, confirmations, received_at, expires_at, paid, processed)"\
                 + " VALUES ('%s', %f, %d, datetime('now'), datetime('now', '+%d Minutes'), NULL, NULL);"%(addr, amount, confs, minutes)
             print sql
             cur.execute(sql)
 
         # set paid=0 for expired requests 
-        cur.execute("""UPDATE electrum_payments set paid=0 WHERE expires_at < CURRENT_TIMESTAMP and paid is NULL;""")
+        cur.execute("""UPDATE shuttle_payments set paid=0 WHERE expires_at < CURRENT_TIMESTAMP and paid is NULL;""")
 
         # do callback for addresses that received payment or expired
-        cur.execute("""SELECT address, paid from electrum_payments WHERE paid is not NULL and processed is NULL;""")
+        cur.execute("""SELECT address, paid from shuttle_payments WHERE paid is not NULL and processed is NULL;""")
         data = cur.fetchall()
         for item in data:
             address, paid = item
@@ -230,7 +230,7 @@ if __name__ == '__main__':
             req = urllib2.Request(url, data_json, headers)
             try:
                 response_stream = urllib2.urlopen(req)
-                cur.execute("UPDATE electrum_payments SET processed=1 WHERE id=%d;"%(id))
+                cur.execute("UPDATE shuttle_payments SET processed=1 WHERE id=%d;"%(id))
             except urllib2.HTTPError:
                 print "cannot do callback", data_json
             except ValueError, e:

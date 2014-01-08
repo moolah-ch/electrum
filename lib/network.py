@@ -1,24 +1,24 @@
 import threading, time, Queue, os, sys, shutil, random
 from util import user_dir, appdata_dir, print_error, print_msg
-from bitcoin import *
+from dogecoin import *
 import interface
 from blockchain import Blockchain
 
 DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
 
 DEFAULT_SERVERS = {
-    #'electrum.coinwallet.me': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
-    'electrum.hachre.de': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
-    'electrum.novit.ro': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
-    'electrum.stepkrav.pw': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
+    #'shuttle.coinwallet.me': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
+    'shuttle.hachre.de': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
+    'shuttle.novit.ro': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
+    'shuttle.stepkrav.pw': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
     #'ecdsa.org': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
-    'electrum.no-ip.org': {'h': '80', 's': '50002', 't': '50001', 'g': '443'},
-    'electrum.drollette.com': {'h': '5000', 's': '50002', 't': '50001', 'g': '8082'},
-    'electrum.random.re': {'h': '80', 's': '110', 't': '50001', 'g': '443'},
+    'shuttle.no-ip.org': {'h': '80', 's': '50002', 't': '50001', 'g': '443'},
+    'shuttle.drollette.com': {'h': '5000', 's': '50002', 't': '50001', 'g': '8082'},
+    'shuttle.random.re': {'h': '80', 's': '110', 't': '50001', 'g': '443'},
     'btc.medoix.com': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
-    'electrum.stupidfoot.com': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
-    #'electrum.pdmc.net': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
-    'electrum.be': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'}
+    'shuttle.stupidfoot.com': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
+    #'shuttle.pdmc.net': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'},
+    'shuttle.be': {'h': '8081', 's': '50002', 't': '50001', 'g': '8082'}
 }
 
 

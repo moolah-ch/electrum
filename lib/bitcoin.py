@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2011 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ def int_to_hex(i, length=1):
     return rev_hex(s)
 
 def var_int(i):
-    # https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_integer
+    # https://en.dogecoin.it/wiki/Protocol_specification#Variable_length_integer
     if i<0xfd:
         return int_to_hex(i)
     elif i<=0xffff:
@@ -60,7 +60,7 @@ hash_encode = lambda x: x[::-1].encode('hex')
 hash_decode = lambda x: x.decode('hex')[::-1]
 
 hmac_sha_512 = lambda x,y: hmac.new(x, y, hashlib.sha512).digest()
-mnemonic_hash = lambda x: hmac_sha_512("Bitcoin mnemonic", x).encode('hex')
+mnemonic_hash = lambda x: hmac_sha_512("Dogecoin mnemonic", x).encode('hex')
 
 # pywallet openssl private key implementation
 
@@ -164,7 +164,7 @@ def b58encode(v):
         long_value = div
     result = __b58chars[long_value] + result
 
-    # Bitcoin does a little leading-zero-compression:
+    # Dogecoin does a little leading-zero-compression:
     # leading 0-bytes in the input become leading-1s
     nPad = 0
     for c in v:
@@ -289,7 +289,7 @@ def msg_magic(message):
     varint = var_int(len(message))
     encoded_varint = "".join([chr(int(varint[i:i+2], 16)) for i in xrange(0, len(varint), 2)])
 
-    return "\x18Bitcoin Signed Message:\n" + encoded_varint + message
+    return "\x18Dogecoin Signed Message:\n" + encoded_varint + message
 
 
 def verify_message(address, signature, message):
@@ -377,7 +377,7 @@ BIP32_PRIME = 0x80000000
 def bip32_init(seed):
     import hmac
     seed = seed.decode('hex')        
-    I = hmac.new("Bitcoin seed", seed, hashlib.sha512).digest()
+    I = hmac.new("Dogecoin seed", seed, hashlib.sha512).digest()
 
     master_secret = I[0:32]
     master_chain = I[32:]
@@ -489,7 +489,7 @@ MIN_RELAY_TX_FEE = 10000
 def test_bip32(seed, sequence):
     """
     run a test vector,
-    see https://en.bitcoin.it/wiki/BIP_0032_TestVectors
+    see https://en.dogecoin.it/wiki/BIP_0032_TestVectors
     """
 
     master_secret, master_chain, master_public_key, master_public_key_compressed = bip32_init(seed)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2012 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 
-from electrum.i18n import _
-from electrum import ELECTRUM_VERSION, print_error
+from shuttle.i18n import _
+from shuttle import ELECTRUM_VERSION, print_error
 
 class VersionGetter(threading.Thread):
 
@@ -33,7 +33,7 @@ class VersionGetter(threading.Thread):
         
     def run(self):
         try:
-            con = httplib.HTTPConnection('electrum.org', 80, timeout=5)
+            con = httplib.HTTPConnection('shuttle.org', 80, timeout=5)
             con.request("GET", "/version")
             res = con.getresponse()
         except socket.error as msg:
@@ -53,7 +53,7 @@ class UpdateLabel(QLabel):
         self.sb = sb
         self.config = config
         self.current_version = ELECTRUM_VERSION
-        self.connect(self, QtCore.SIGNAL('new_electrum_version'), self.new_electrum_version)
+        self.connect(self, QtCore.SIGNAL('new_shuttle_version'), self.new_shuttle_version)
         # prevent HTTP leaks if a proxy is set
         if self.config.get('proxy'):
             return
@@ -65,9 +65,9 @@ class UpdateLabel(QLabel):
             latest_seen = self.config.get("last_seen_version",ELECTRUM_VERSION)
             if(self.compare_versions(self.latest_version, latest_seen) == 1):
                 self.new_version = True
-                self.emit(QtCore.SIGNAL('new_electrum_version'))
+                self.emit(QtCore.SIGNAL('new_shuttle_version'))
 
-    def new_electrum_version(self):
+    def new_shuttle_version(self):
         if self.new_version:
             self.setText(_("New version available") + ": " + self.latest_version)
             self.sb.insertPermanentWidget(1, self)
@@ -90,16 +90,16 @@ class UpdateLabel(QLabel):
         self.dialog.done(0)
   
     def open_website(self):
-        webbrowser.open("http://electrum.org/download.html")
+        webbrowser.open("http://shuttle.org/download.html")
         self.dialog.done(0)
 
     def mouseReleaseEvent(self, event):
         dialog = QDialog(self)
-        dialog.setWindowTitle(_('Electrum update'))
+        dialog.setWindowTitle(_('Shuttle update'))
         dialog.setModal(1)
 
         main_layout = QGridLayout()
-        main_layout.addWidget(QLabel(_("A new version of Electrum is available:")+" " + self.latest_version), 0,0,1,3)
+        main_layout.addWidget(QLabel(_("A new version of Shuttle is available:")+" " + self.latest_version), 0,0,1,3)
         
         ignore_version = QPushButton(_("Ignore this version"))
         ignore_version.clicked.connect(self.ignore_this_version)

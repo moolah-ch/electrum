@@ -6,7 +6,7 @@ from verifier import TxVerifier
 from network import Network, DEFAULT_SERVERS, DEFAULT_PORTS, pick_random_server
 from interface import Interface
 from simple_config import SimpleConfig
-import bitcoin
+import dogecoin
 import account
 import transaction
 from transaction import Transaction

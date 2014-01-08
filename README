@@ -1,9 +1,9 @@
-Electrum - lightweight Bitcoin client
+Shuttle - lightweight Dogecoin client
 
 Licence: GNU GPL v3
-Author: thomasv@bitcointalk.org
+Author: thomasv@dogecointalk.org
 Language: Python
-Homepage: http://electrum.org/
+Homepage: http://shuttle.org/
 
 
 == INSTALL ==
@@ -13,14 +13,14 @@ Homepage: http://electrum.org/
 
 == RUN ==
 
-To start Electrum in GUI mode, type:
+To start Shuttle in GUI mode, type:
 
-  electrum
+  shuttle
 
 == HELP ==
 
 Up-to-date information and documentation is on the wiki:
-https://en.bitcoin.it/wiki/Electrum
+https://en.dogecoin.it/wiki/Shuttle
 
 
 == HOW OFFICIAL PACKAGES ARE CREATED ==
@@ -37,9 +37,9 @@ On Mac OS X:
   # On brew installs
   ARCHFLAGS="-arch i386 -arch x86_64" sudo python setup-release.py py2app --includes sip
 
-  sudo hdiutil create -fs HFS+ -volname "Electrum" -srcfolder dist/Electrum.app dist/electrum-VERSION-macosx.dmg
+  sudo hdiutil create -fs HFS+ -volname "Shuttle" -srcfolder dist/Shuttle.app dist/shuttle-VERSION-macosx.dmg
 
 
 == BROWSER CONFIGURATION ==
 
-See http://electrum.org/bitcoin_URIs.html
+See http://shuttle.org/dogecoin_URIs.html

@@ -1,16 +1,16 @@
-from electrum.util import print_error
+from shuttle.util import print_error
 from urlparse import urlparse, parse_qs
 from PyQt4.QtGui import QPushButton, QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QLineEdit, QComboBox
 from PyQt4.QtCore import Qt
 
-from electrum.i18n import _
+from shuttle.i18n import _
 import re
 import os
-from electrum import Transaction
-from electrum.bitcoin import MIN_RELAY_TX_FEE, is_valid
-from electrum_gui.qt.qrcodewidget import QRCodeWidget
-from electrum import bmp
-from electrum_gui.qt import HelpButton, EnterButton
+from shuttle import Transaction
+from shuttle.dogecoin import MIN_RELAY_TX_FEE, is_valid
+from shuttle_gui.qt.qrcodewidget import QRCodeWidget
+from shuttle import bmp
+from shuttle_gui.qt import HelpButton, EnterButton
 import json
 
 try:
@@ -18,7 +18,7 @@ try:
 except ImportError:
     zbar = None
 
-from electrum import BasePlugin
+from shuttle import BasePlugin
 class Plugin(BasePlugin):
 
     def fullname(self): return 'QR scans'
@@ -94,7 +94,7 @@ class Plugin(BasePlugin):
         to_address = m.group(2) if m else r
 
         if not is_valid(to_address):
-            QMessageBox.warning(self.gui.main_window, _('Error'), _('Invalid Bitcoin Address') + ':\n' + to_address, _('OK'))
+            QMessageBox.warning(self.gui.main_window, _('Error'), _('Invalid Dogecoin Address') + ':\n' + to_address, _('OK'))
             return
 
         try:
@@ -149,7 +149,7 @@ class Plugin(BasePlugin):
 
         def print_qr(self):
             filename = "qrcode.bmp"
-            electrum_gui.bmp.save_qrcode(qrw.qr, filename)
+            shuttle_gui.bmp.save_qrcode(qrw.qr, filename)
             QMessageBox.information(None, _('Message'), _("QR code saved to file") + " " + filename, _('OK'))
 
         b = QPushButton(_("Save"))
@@ -344,7 +344,7 @@ def parse_uri(uri):
         return {'address': uri}
 
     if '//' not in uri:
-        # Workaround for urlparse, it don't handle bitcoin: URI properly
+        # Workaround for urlparse, it don't handle dogecoin: URI properly
         uri = uri.replace(':', '://')
         
     uri = urlparse(uri)
@@ -371,16 +371,16 @@ if __name__ == '__main__':
     assert(parse_uri('1Marek48fwU7mugmSe186do2QpUkBnpzSN') ==
            {'address': '1Marek48fwU7mugmSe186do2QpUkBnpzSN'})
 
-    assert(parse_uri('bitcoin://1Marek48fwU7mugmSe186do2QpUkBnpzSN') ==
+    assert(parse_uri('dogecoin://1Marek48fwU7mugmSe186do2QpUkBnpzSN') ==
            {'address': '1Marek48fwU7mugmSe186do2QpUkBnpzSN'})
     
-    assert(parse_uri('bitcoin:1Marek48fwU7mugmSe186do2QpUkBnpzSN') ==
+    assert(parse_uri('dogecoin:1Marek48fwU7mugmSe186do2QpUkBnpzSN') ==
            {'address': '1Marek48fwU7mugmSe186do2QpUkBnpzSN'})
     
-    assert(parse_uri('bitcoin:1Marek48fwU7mugmSe186do2QpUkBnpzSN?amount=10') ==
+    assert(parse_uri('dogecoin:1Marek48fwU7mugmSe186do2QpUkBnpzSN?amount=10') ==
            {'amount': '10', 'address': '1Marek48fwU7mugmSe186do2QpUkBnpzSN'})
     
-    assert(parse_uri('bitcoin:1Marek48fwU7mugmSe186do2QpUkBnpzSN?amount=10&label=slush&message=Small%20tip%20to%20slush') ==
+    assert(parse_uri('dogecoin:1Marek48fwU7mugmSe186do2QpUkBnpzSN?amount=10&label=slush&message=Small%20tip%20to%20slush') ==
            {'amount': '10', 'label': 'slush', 'message': 'Small tip to slush', 'address': '1Marek48fwU7mugmSe186do2QpUkBnpzSN'})
     
     

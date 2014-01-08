@@ -85,25 +85,25 @@ bugfixes: connection problems, transactions staying unverified
 # Release 1.7
 
 * The Classic GUI can be extended with plugins. Developers who want to
-add new features or third-party services to Electrum are invited to
+add new features or third-party services to Shuttle are invited to
 write plugins. Some previously existing and non-essential features of
-Electrum (point-of-sale mode, qrcode scanner) were removed from the
+Shuttle (point-of-sale mode, qrcode scanner) were removed from the
 core and are now available as plugins.
 
 * The wallet waits for 2 confirmations before creating new
 addresses. This makes recovery from seed more robust. Note that it
-might create unwanted gaps if you use Electrum 1.7 together with older
-versions of Electrum.
+might create unwanted gaps if you use Shuttle 1.7 together with older
+versions of Shuttle.
 
 * An interactive Python console replaces the 'Wall' tab. The provided
 python environment gives users access to the wallet and gui. Most
-electrum commands are available as python function in the
+shuttle commands are available as python function in the
 console. Custom scripts an be loaded with a "run(filename)"
 command. Tab-completions are available.
 
-* The location of the Electrum folder in Windows changed from
+* The location of the Shuttle folder in Windows changed from
 LOCALAPPDATA to APPDATA. Discussion on this topic can be found here:
-https://bitcointalk.org/index.php?topic=144575.0
+https://dogecointalk.org/index.php?topic=144575.0
 
 * Private keys can be exported from within the classic GUI:
   For a single address, use the address menu (right-click).
@@ -112,7 +112,7 @@ https://bitcointalk.org/index.php?topic=144575.0
 * It is possible to create, sign and redeem multisig transaction using the 
 command line interface.  This is made possible by the following new commands:
     dumpprivkey, listunspent, createmultisig, createrawtransaction, decoderawtransaction, signrawtransaction
-The syntax of these commands is similar to their bitcoind counterpart. 
+The syntax of these commands is similar to their dogecoind counterpart. 
 For an example, see Gavin's tutorial: https://gist.github.com/gavinandresen/3966071
 
 * Offline wallets now work in a way similar to Armory: 
@@ -121,7 +121,7 @@ For an example, see Gavin's tutorial: https://gist.github.com/gavinandresen/3966
   3. signed transaction is copied to the online computer, broadcasted by the online client.
   4. All these steps can be done via the command line interface or the classic GUI. 
 
-* Many command line commands have been renamed in order to make the syntax consistent with bitcoind.
+* Many command line commands have been renamed in order to make the syntax consistent with dogecoind.
 
 # Release 1.6.2
 
@@ -136,7 +136,7 @@ For an example, see Gavin's tutorial: https://gist.github.com/gavinandresen/3966
 
 == Classic GUI
 * Seed and MPK help dialogs were rewritten
-* Point of Sale: requested amounts can be expressed in other currencies and are converted to bitcoin.
+* Point of Sale: requested amounts can be expressed in other currencies and are converted to dogecoin.
 
 == Lite GUI
 * The receiving button was removed in favor of a menu item to keep it consistent with the history toggle.

@@ -1,12 +1,12 @@
-Here is how to sign a transaction with an offline Electrum wallet.
+Here is how to sign a transaction with an offline Shuttle wallet.
 
 1. With your online (seedless) wallet, create the transaction using mktx:
 
-./electrum mktx 1Cpf9zb5Rm5Z5qmmGezn6ERxFWvwuZ6UCx 0.1
+./shuttle mktx 1Cpf9zb5Rm5Z5qmmGezn6ERxFWvwuZ6UCx 0.1
 {
     "complete": false, 
     "hex": "010000000296f054a6eccd3051444aec20e9c5c9b58739e70c7d958e4eb03587acf99d02e70000000000ffffffffdf350752fe6e27534633bb59327d9feb347756fe8d6e5b0b56312aca57df0eb30000000000ffffffff02f4345c35000000001976a914aaf437e25805f288141bfcdc27887ee5492bd13188ac80969800000000001976a91481acc8b7f9ec7cbf45a02dd8b758c6ac6a1481ca88ac00000000", 
-    "input_info": "[{'scriptPubKey':'76a91411bbdc6e3a27c44644d83f783ca7df3bdc2778e688ac','electrumKeyID':(15,False),'vout':0,'txid':u'e7029df9ac8735b04e8e957d0ce73987b5c9c5e920ec4a445130cdeca654f096'},{'scriptPubKey':'76a914aaf437e25805f288141bfcdc27887ee5492bd13188ac','electrumKeyID':(112,True),'vout':0,'txid':u'b30edf57ca2a31560b5b6e8dfe567734eb9f7d3259bb334653276efe520735df'}]"
+    "input_info": "[{'scriptPubKey':'76a91411bbdc6e3a27c44644d83f783ca7df3bdc2778e688ac','shuttleKeyID':(15,False),'vout':0,'txid':u'e7029df9ac8735b04e8e957d0ce73987b5c9c5e920ec4a445130cdeca654f096'},{'scriptPubKey':'76a914aaf437e25805f288141bfcdc27887ee5492bd13188ac','shuttleKeyID':(112,True),'vout':0,'txid':u'b30edf57ca2a31560b5b6e8dfe567734eb9f7d3259bb334653276efe520735df'}]"
 }
 
 Note that returned json contains the unsigned tx in "hex". The field
@@ -16,7 +16,7 @@ wallet so that it knows which private keys to generate.
 
 2. Sign the transaction with your offline wallet: pass "hex" and "input_info" to 'signrawtransaction':
 
-./electrum signrawtransaction 010000000296f054a6eccd3051444aec20e9c5c9b58739e70c7d958e4eb03587acf99d02e70000000000ffffffffdf350752fe6e27534633bb59327d9feb347756fe8d6e5b0b56312aca57df0eb30000000000ffffffff0280969800000000001976a91481acc8b7f9ec7cbf45a02dd8b758c6ac6a1481ca88acf4345c35000000001976a914aaf437e25805f288141bfcdc27887ee5492bd13188ac00000000 "[{'scriptPubKey':'76a91411bbdc6e3a27c44644d83f783ca7df3bdc2778e688ac','electrumKeyID':(15,False),'vout':0,'txid':u'e7029df9ac8735b04e8e957d0ce73987b5c9c5e920ec4a445130cdeca654f096'},{'scriptPubKey':'76a914aaf437e25805f288141bfcdc27887ee5492bd13188ac','electrumKeyID':(112,True),'vout':0,'txid':u'b30edf57ca2a31560b5b6e8dfe567734eb9f7d3259bb334653276efe520735df'}]" 
+./shuttle signrawtransaction 010000000296f054a6eccd3051444aec20e9c5c9b58739e70c7d958e4eb03587acf99d02e70000000000ffffffffdf350752fe6e27534633bb59327d9feb347756fe8d6e5b0b56312aca57df0eb30000000000ffffffff0280969800000000001976a91481acc8b7f9ec7cbf45a02dd8b758c6ac6a1481ca88acf4345c35000000001976a914aaf437e25805f288141bfcdc27887ee5492bd13188ac00000000 "[{'scriptPubKey':'76a91411bbdc6e3a27c44644d83f783ca7df3bdc2778e688ac','shuttleKeyID':(15,False),'vout':0,'txid':u'e7029df9ac8735b04e8e957d0ce73987b5c9c5e920ec4a445130cdeca654f096'},{'scriptPubKey':'76a914aaf437e25805f288141bfcdc27887ee5492bd13188ac','shuttleKeyID':(112,True),'vout':0,'txid':u'b30edf57ca2a31560b5b6e8dfe567734eb9f7d3259bb334653276efe520735df'}]" 
 Password:
 {
     "complete": true, 

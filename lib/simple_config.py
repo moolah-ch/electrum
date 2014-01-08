@@ -11,7 +11,7 @@ class SimpleConfig:
     """
 The SimpleConfig class is responsible for handling operations involving
 configuration files.  The constructor reads and stores the system and 
-user configurations from electrum.conf into separate dictionaries within
+user configurations from shuttle.conf into separate dictionaries within
 a SimpleConfig instance then reads the wallet file.
 """
     def __init__(self, options={}):
@@ -38,12 +38,12 @@ a SimpleConfig instance then reads the wallet file.
 
     def init_path(self):
 
-        # Read electrum path in the command line configuration
-        self.path = self.options_config.get('electrum_path')
+        # Read shuttle path in the command line configuration
+        self.path = self.options_config.get('shuttle_path')
 
-        # Read electrum path in the system configuration
+        # Read shuttle path in the system configuration
         if self.path is None:
-            self.path = self.system_config.get('electrum_path')
+            self.path = self.system_config.get('shuttle_path')
 
         # If not set, use the user's default data directory.
         if self.path is None:
@@ -53,7 +53,7 @@ a SimpleConfig instance then reads the wallet file.
         if not os.path.exists(self.path):
             os.mkdir(self.path)
 
-        print_error( "electrum directory", self.path)
+        print_error( "shuttle directory", self.path)
 
         # portable wallet: use the same directory for wallet and headers file
         #if options.get('portable'):
@@ -122,13 +122,13 @@ a SimpleConfig instance then reads the wallet file.
 
 
     def read_system_config(self):
-        """Parse and store the system config settings in electrum.conf into system_config[]."""
-        name = '/etc/electrum.conf'
+        """Parse and store the system config settings in shuttle.conf into system_config[]."""
+        name = '/etc/shuttle.conf'
         if os.path.exists(name):
             try:
                 import ConfigParser
             except ImportError:
-                print "cannot parse electrum.conf. please install ConfigParser"
+                print "cannot parse shuttle.conf. please install ConfigParser"
                 return
                 
             p = ConfigParser.ConfigParser()
@@ -141,7 +141,7 @@ a SimpleConfig instance then reads the wallet file.
 
 
     def read_user_config(self):
-        """Parse and store the user config settings in electrum.conf into user_config[]."""
+        """Parse and store the user config settings in shuttle.conf into user_config[]."""
         if not self.path: return
 
         path = os.path.join(self.path, "config")

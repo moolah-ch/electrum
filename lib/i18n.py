@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2012 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ if os.path.exists('./locale'):
 else:
     LOCALE_DIR = '/usr/share/locale'
 
-language = gettext.translation('electrum', LOCALE_DIR, fallback = True)
+language = gettext.translation('shuttle', LOCALE_DIR, fallback = True)
 
 def _(x):
     global language
@@ -31,7 +31,7 @@ def _(x):
 
 def set_language(x):
     global language
-    if x: language = gettext.translation('electrum', LOCALE_DIR, fallback = True, languages=[x])
+    if x: language = gettext.translation('shuttle', LOCALE_DIR, fallback = True, languages=[x])
     
     
 languages = {

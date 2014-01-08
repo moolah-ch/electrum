@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2012 thomasv@gitorious
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys, time, datetime, re, threading
-from electrum.i18n import _, set_language
-from electrum.util import print_error, print_msg
+from shuttle.i18n import _, set_language
+from shuttle.util import print_error, print_msg
 import os.path, json, ast, traceback
 import shutil
 import StringIO
@@ -29,19 +29,19 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 
-from electrum.bitcoin import MIN_RELAY_TX_FEE, is_valid
-from electrum.plugins import run_hook
+from shuttle.dogecoin import MIN_RELAY_TX_FEE, is_valid
+from shuttle.plugins import run_hook
 
 import icons_rc
 
-from electrum.wallet import format_satoshis
-from electrum import Transaction
-from electrum import mnemonic
-from electrum import util, bitcoin, commands, Interface, Wallet
-from electrum import SimpleConfig, Wallet, WalletStorage
+from shuttle.wallet import format_satoshis
+from shuttle import Transaction
+from shuttle import mnemonic
+from shuttle import util, dogecoin, commands, Interface, Wallet
+from shuttle import SimpleConfig, Wallet, WalletStorage
 
 
-from electrum import bmp, pyqrnative
+from shuttle import bmp, pyqrnative
 
 from amountedit import AmountEdit
 from network_dialog import NetworkDialog
@@ -62,7 +62,7 @@ elif platform.system() == 'Darwin':
 else:
     MONOSPACE_FONT = 'monospace'
 
-from electrum import ELECTRUM_VERSION
+from shuttle import ELECTRUM_VERSION
 import re
 
 from util import *
@@ -97,7 +97,7 @@ class StatusBarButton(QPushButton):
 
 default_column_widths = { "history":[40,140,350,140], "contacts":[350,330], "receive": [370,200,130] }
 
-class ElectrumWindow(QMainWindow):
+class ShuttleWindow(QMainWindow):
     def changeEvent(self, event):
         flags = self.windowFlags();
         if event and event.type() == QtCore.QEvent.WindowStateChange:
@@ -105,7 +105,7 @@ class ElectrumWindow(QMainWindow):
                 self.build_menu(True)
                 # The only way to toggle the icon in the window managers taskbar is to use the Qt.Tooltip flag
                 # The problem is that it somehow creates an (in)visible window that will stay active and prevent
-                # Electrum from closing.
+                # Shuttle from closing.
                 # As for now I have no clue how to implement a proper 'hide to tray' functionality.
                 # self.setWindowFlags(flags & ~Qt.ToolTip)
             elif event.oldState() & QtCore.Qt.WindowMinimized:
@@ -120,7 +120,7 @@ class ElectrumWindow(QMainWindow):
             m.addAction(_("Hide"), self.showMinimized)
 
         m.addSeparator()
-        m.addAction(_("Exit Electrum"), self.close)
+        m.addAction(_("Exit Shuttle"), self.close)
         self.tray.setContextMenu(m)
 
     def tray_activated(self, reason):
@@ -136,17 +136,17 @@ class ElectrumWindow(QMainWindow):
         self.config = config
         self.network = network
 
-        self._close_electrum = False
+        self._close_shuttle = False
         self.lite = None
 
         if sys.platform == 'darwin':
-          self.icon = QIcon(":icons/electrum_dark_icon.png")
+          self.icon = QIcon(":icons/shuttle_dark_icon.png")
           #self.icon = QIcon(":icons/lock.png")
         else:
-          self.icon = QIcon(':icons/electrum_light_icon.png')
+          self.icon = QIcon(':icons/shuttle_light_icon.png')
 
         self.tray = QSystemTrayIcon(self.icon, self)
-        self.tray.setToolTip('Electrum')
+        self.tray.setToolTip('Shuttle')
         self.tray.activated.connect(self.tray_activated)
 
         self.build_menu()
@@ -177,7 +177,7 @@ class ElectrumWindow(QMainWindow):
         g = self.config.get("winpos-qt",[100, 100, 840, 400])
         self.setGeometry(g[0], g[1], g[2], g[3])
 
-        self.setWindowIcon(QIcon(":icons/electrum.png"))
+        self.setWindowIcon(QIcon(":icons/shuttle.png"))
         self.init_menubar()
 
         QShortcut(QKeySequence("Ctrl+W"), self, self.close)
@@ -225,7 +225,7 @@ class ElectrumWindow(QMainWindow):
         import lite_window
         if not self.check_qt_version():
             if self.config.get('lite_mode') is True:
-                msg = "Electrum was unable to load the 'Lite GUI' because it needs Qt version >= 4.7.\nChanging your config to use the 'Classic' GUI"
+                msg = "Shuttle was unable to load the 'Lite GUI' because it needs Qt version >= 4.7.\nChanging your config to use the 'Classic' GUI"
                 QMessageBox.warning(None, "Could not start Lite GUI.", msg)
                 self.config.set_key('lite_mode', False, True)
                 sys.exit(0)
@@ -272,12 +272,12 @@ class ElectrumWindow(QMainWindow):
 
 
     def load_wallet(self, wallet):
-        import electrum
+        import shuttle
         self.wallet = wallet
         self.accounts_expanded = self.wallet.storage.get('accounts_expanded',{})
         self.current_account = self.wallet.storage.get("current_account", None)
 
-        title = 'Electrum ' + self.wallet.electrum_version + '  -  ' + self.wallet.storage.path
+        title = 'Shuttle ' + self.wallet.shuttle_version + '  -  ' + self.wallet.storage.path
         if self.wallet.is_watching_only(): title += ' [%s]' % (_('watching only'))
         self.setWindowTitle( title )
         self.update_wallet()
@@ -327,7 +327,7 @@ class ElectrumWindow(QMainWindow):
                 shutil.copy2(path, new_path)
                 QMessageBox.information(None,"Wallet backup created", _("A copy of your wallet file was created in")+" '%s'" % str(new_path))
             except (IOError, os.error), reason:
-                QMessageBox.critical(None,"Unable to create backup", _("Electrum was unable to copy your wallet file to the specified location.")+"\n" + str(reason))
+                QMessageBox.critical(None,"Unable to create backup", _("Shuttle was unable to copy your wallet file to the specified location.")+"\n" + str(reason))
 
 
     def new_wallet(self):
@@ -412,7 +412,7 @@ class ElectrumWindow(QMainWindow):
         tools_menu = menubar.addMenu(_("&Tools"))
 
         # Settings / Preferences are all reserved keywords in OSX using this as work around
-        preferences_name = _("Electrum preferences") if sys.platform == 'darwin' else _("Preferences")
+        preferences_name = _("Shuttle preferences") if sys.platform == 'darwin' else _("Preferences")
         preferences_menu = tools_menu.addAction(preferences_name)
         #preferences_menu.setShortcut(QKeySequence.Preferences)
         preferences_menu.triggered.connect(self.settings_dialog)
@@ -446,24 +446,24 @@ class ElectrumWindow(QMainWindow):
         show_about = help_menu.addAction(_("&About"))
         show_about.triggered.connect(self.show_about)
         web_open = help_menu.addAction(_("&Official website"))
-        web_open.triggered.connect(lambda: webbrowser.open("http://electrum.org"))
+        web_open.triggered.connect(lambda: webbrowser.open("http://shuttle.org"))
 
         help_menu.addSeparator()
         doc_open = help_menu.addAction(_("&Documentation"))
         doc_open.setShortcut(QKeySequence.HelpContents)
-        doc_open.triggered.connect(lambda: webbrowser.open("http://electrum.org/documentation.html"))
+        doc_open.triggered.connect(lambda: webbrowser.open("http://shuttle.org/documentation.html"))
         report_bug = help_menu.addAction(_("&Report Bug"))
         report_bug.triggered.connect(self.show_report_bug)
 
         self.setMenuBar(menubar)
 
     def show_about(self):
-        QMessageBox.about(self, "Electrum",
-            _("Version")+" %s" % (self.wallet.electrum_version) + "\n\n" + _("Electrum's focus is speed, with low resource usage and simplifying Bitcoin. You do not need to perform regular backups, because your wallet can be recovered from a secret phrase that you can memorize or write on paper. Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the Bitcoin system."))
+        QMessageBox.about(self, "Shuttle",
+            _("Version")+" %s" % (self.wallet.shuttle_version) + "\n\n" + _("Shuttle's focus is speed, with low resource usage and simplifying Dogecoin. You do not need to perform regular backups, because your wallet can be recovered from a secret phrase that you can memorize or write on paper. Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the Dogecoin system."))
 
     def show_report_bug(self):
-        QMessageBox.information(self, "Electrum - " + _("Reporting Bugs"),
-            _("Please report any bugs as issues on github:")+" <a href=\"https://github.com/spesmilo/electrum/issues\">https://github.com/spesmilo/electrum/issues</a>")
+        QMessageBox.information(self, "Shuttle - " + _("Reporting Bugs"),
+            _("Please report any bugs as issues on github:")+" <a href=\"https://github.com/spesmilo/shuttle/issues\">https://github.com/spesmilo/shuttle/issues</a>")
 
 
     def notify_transactions(self):
@@ -494,7 +494,7 @@ class ElectrumWindow(QMainWindow):
                           self.notify(_("New transaction received. %(amount)s %(unit)s") % { 'amount' : self.format_amount(v), 'unit' : self.base_unit()})
 
     def notify(self, message):
-        self.tray.showMessage("Electrum", message, QSystemTrayIcon.Information, 20000)
+        self.tray.showMessage("Shuttle", message, QSystemTrayIcon.Information, 20000)
 
 
 
@@ -751,7 +751,7 @@ class ElectrumWindow(QMainWindow):
         grid.addWidget(QLabel(_('Pay to')), 1, 0)
         grid.addWidget(self.payto_e, 1, 1, 1, 3)
 
-        grid.addWidget(HelpButton(_('Recipient of the funds.') + '\n\n' + _('You may enter a Bitcoin address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a Bitcoin address)')), 1, 4)
+        grid.addWidget(HelpButton(_('Recipient of the funds.') + '\n\n' + _('You may enter a Dogecoin address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a Dogecoin address)')), 1, 4)
 
         completer = QCompleter()
         completer.setCaseSensitivity(False)
@@ -786,7 +786,7 @@ class ElectrumWindow(QMainWindow):
         grid.addWidget(QLabel(_('Fee')), 5, 0)
         grid.addWidget(self.fee_e, 5, 1, 1, 2)
         grid.addWidget(HelpButton(
-                _('Bitcoin transactions are in general not free. A transaction fee is paid by the sender of the funds.') + '\n\n'\
+                _('Dogecoin transactions are in general not free. A transaction fee is paid by the sender of the funds.') + '\n\n'\
                     + _('The amount of fee can be decided freely by the sender. However, transactions with low fees take more time to be processed.') + '\n\n'\
                     + _('A suggested fee is automatically added to this field. You may override it. The suggested fee increases with the size of the transaction.')), 5, 3)
 
@@ -891,7 +891,7 @@ class ElectrumWindow(QMainWindow):
         to_address = m.group(2) if m else r
 
         if not is_valid(to_address):
-            QMessageBox.warning(self, _('Error'), _('Invalid Bitcoin Address') + ':\n' + to_address, _('OK'))
+            QMessageBox.warning(self, _('Error'), _('Invalid Dogecoin Address') + ':\n' + to_address, _('OK'))
             return
 
         try:
@@ -990,7 +990,7 @@ class ElectrumWindow(QMainWindow):
             self.set_frozen(self.payto_e,True)
             self.set_frozen(self.amount_e,True)
             self.set_frozen(self.message_e,True)
-            self.payto_sig.setText( '      '+_('The bitcoin URI was signed by')+' ' + identity )
+            self.payto_sig.setText( '      '+_('The dogecoin URI was signed by')+' ' + identity )
         else:
             self.payto_sig.setVisible(False)
 
@@ -1157,7 +1157,7 @@ class ElectrumWindow(QMainWindow):
         menu = QMenu()
         if not multi_select:
             menu.addAction(_("Copy to clipboard"), lambda: self.app.clipboard().setText(addr))
-            menu.addAction(_("QR code"), lambda: self.show_qrcode("bitcoin:" + addr, _("Address")) )
+            menu.addAction(_("QR code"), lambda: self.show_qrcode("dogecoin:" + addr, _("Address")) )
             menu.addAction(_("Edit label"), lambda: self.edit_label(True))
             if self.wallet.seed:
                 menu.addAction(_("Private key"), lambda: self.show_private_key(addr))
@@ -1222,7 +1222,7 @@ class ElectrumWindow(QMainWindow):
             payto_addr = item.data(0,33).toString()
             menu.addAction(_("Copy to Clipboard"), lambda: self.app.clipboard().setText(addr))
             menu.addAction(_("Pay to"), lambda: self.payto(payto_addr))
-            menu.addAction(_("QR code"), lambda: self.show_qrcode("bitcoin:" + addr, _("Address")))
+            menu.addAction(_("QR code"), lambda: self.show_qrcode("dogecoin:" + addr, _("Address")))
             if is_editable:
                 menu.addAction(_("Edit label"), lambda: self.edit_label(False))
                 menu.addAction(_("Delete"), lambda: self.delete_contact(addr))
@@ -1373,7 +1373,7 @@ class ElectrumWindow(QMainWindow):
         console.history_index = len(console.history)
 
         console.updateNamespace({'wallet' : self.wallet, 'network' : self.network, 'gui':self})
-        console.updateNamespace({'util' : util, 'bitcoin':bitcoin})
+        console.updateNamespace({'util' : util, 'dogecoin':dogecoin})
 
         c = commands.Commands(self.wallet, self.network, lambda: self.console.set_json(True))
         methods = {}
@@ -1502,7 +1502,7 @@ class ElectrumWindow(QMainWindow):
         vbox.addWidget(QLabel(_('Account name')+':'))
         e = QLineEdit()
         vbox.addWidget(e)
-        msg = _("Note: Newly created accounts are 'pending' until they receive bitcoins.") + " " \
+        msg = _("Note: Newly created accounts are 'pending' until they receive dogecoins.") + " " \
             + _("You will need to wait for 2 confirmations until the correct balance is displayed and more addresses are created for that account.")
         l = QLabel(msg)
         l.setWordWrap(True)
@@ -1785,7 +1785,7 @@ class ElectrumWindow(QMainWindow):
         def do_verify():
             message = unicode(verify_message.toPlainText())
             message = message.encode('utf-8')
-            if bitcoin.verify_message(verify_address.text(), str(verify_signature.toPlainText()), message):
+            if dogecoin.verify_message(verify_address.text(), str(verify_signature.toPlainText()), message):
                 self.show_message(_("Signature verified"))
             else:
                 self.show_message(_("Error: wrong signature"))
@@ -1867,7 +1867,7 @@ class ElectrumWindow(QMainWindow):
         except Exception:
             pass
 
-        QMessageBox.critical(None, _("Unable to parse transaction"), _("Electrum was unable to parse your transaction"))
+        QMessageBox.critical(None, _("Unable to parse transaction"), _("Shuttle was unable to parse your transaction"))
 
 
 
@@ -1879,7 +1879,7 @@ class ElectrumWindow(QMainWindow):
             with open(fileName, "r") as f:
                 file_content = f.read()
         except (ValueError, IOError, os.error), reason:
-            QMessageBox.critical(None, _("Unable to read file or no transaction found"), _("Electrum was unable to open your transaction file") + "\n" + str(reason))
+            QMessageBox.critical(None, _("Unable to read file or no transaction found"), _("Shuttle was unable to open your transaction file") + "\n" + str(reason))
 
         return self.tx_from_text(file_content)
 
@@ -1910,7 +1910,7 @@ class ElectrumWindow(QMainWindow):
                 amount = int(100000000*amount)
                 outputs.append((address, amount))
         except (ValueError, IOError, os.error), reason:
-            QMessageBox.critical(None, _("Unable to read file or no transaction found"), _("Electrum was unable to open your transaction file") + "\n" + str(reason))
+            QMessageBox.critical(None, _("Unable to read file or no transaction found"), _("Shuttle was unable to open your transaction file") + "\n" + str(reason))
             return
 
         try:
@@ -1930,7 +1930,7 @@ class ElectrumWindow(QMainWindow):
                 csvReader = csv.reader(f)
                 self.do_process_from_csvReader(csvReader)
         except (ValueError, IOError, os.error), reason:
-            QMessageBox.critical(None, _("Unable to read file or no transaction found"), _("Electrum was unable to open your transaction file") + "\n" + str(reason))
+            QMessageBox.critical(None, _("Unable to read file or no transaction found"), _("Shuttle was unable to open your transaction file") + "\n" + str(reason))
             return
 
     def do_process_from_csv_text(self):
@@ -1954,7 +1954,7 @@ class ElectrumWindow(QMainWindow):
 
         try:
             select_export = _('Select file to export your private keys to')
-            fileName = self.getSaveFileName(select_export, 'electrum-private-keys.csv', "*.csv")
+            fileName = self.getSaveFileName(select_export, 'shuttle-private-keys.csv', "*.csv")
             if fileName:
                 with open(fileName, "w+") as csvfile:
                     transaction = csv.writer(csvfile)
@@ -1969,7 +1969,7 @@ class ElectrumWindow(QMainWindow):
                     self.show_message(_("Private keys exported."))
 
         except (IOError, os.error), reason:
-            export_error_label = _("Electrum was unable to produce a private key-export.")
+            export_error_label = _("Shuttle was unable to produce a private key-export.")
             QMessageBox.critical(None, _("Unable to create csv"), export_error_label + "\n" + str(reason))
 
         except Exception as e:
@@ -1988,19 +1988,19 @@ class ElectrumWindow(QMainWindow):
                 self.wallet.set_label(key, value)
             QMessageBox.information(None, _("Labels imported"), _("Your labels were imported from")+" '%s'" % str(labelsFile))
         except (IOError, os.error), reason:
-            QMessageBox.critical(None, _("Unable to import labels"), _("Electrum was unable to import your labels.")+"\n" + str(reason))
+            QMessageBox.critical(None, _("Unable to import labels"), _("Shuttle was unable to import your labels.")+"\n" + str(reason))
 
 
     def do_export_labels(self):
         labels = self.wallet.labels
         try:
-            fileName = self.getSaveFileName(_("Select file to save your labels"), 'electrum_labels.dat', "*.dat")
+            fileName = self.getSaveFileName(_("Select file to save your labels"), 'shuttle_labels.dat', "*.dat")
             if fileName:
                 with open(fileName, 'w+') as f:
                     json.dump(labels, f)
                 QMessageBox.information(None, _("Labels exported"), _("Your labels where exported to")+" '%s'" % str(fileName))
         except (IOError, os.error), reason:
-            QMessageBox.critical(None, _("Unable to export labels"), _("Electrum was unable to export your labels.")+"\n" + str(reason))
+            QMessageBox.critical(None, _("Unable to export labels"), _("Shuttle was unable to export your labels.")+"\n" + str(reason))
 
 
     def do_export_history(self):
@@ -2042,7 +2042,7 @@ class ElectrumWindow(QMainWindow):
 
     def settings_dialog(self):
         d = QDialog(self)
-        d.setWindowTitle(_('Electrum Settings'))
+        d.setWindowTitle(_('Shuttle Settings'))
         d.setModal(1)
         vbox = QVBoxLayout()
         grid = QGridLayout()
@@ -2061,7 +2061,7 @@ class ElectrumWindow(QMainWindow):
         lang_label=QLabel(_('Language') + ':')
         grid.addWidget(lang_label, 1, 0)
         lang_combo = QComboBox()
-        from electrum.i18n import languages
+        from shuttle.i18n import languages
         lang_combo.addItems(languages.values())
         try:
             index = languages.keys().index(self.config.get("language",''))
@@ -2156,7 +2156,7 @@ class ElectrumWindow(QMainWindow):
         run_hook('close_settings_dialog')
 
         if need_restart:
-            QMessageBox.warning(self, _('Success'), _('Please restart Electrum to activate the new GUI settings'), _('OK'))
+            QMessageBox.warning(self, _('Success'), _('Please restart Shuttle to activate the new GUI settings'), _('OK'))
 
 
     def run_network_dialog(self):
@@ -2176,10 +2176,10 @@ class ElectrumWindow(QMainWindow):
 
 
     def plugins_dialog(self):
-        from electrum.plugins import plugins
+        from shuttle.plugins import plugins
 
         d = QDialog(self)
-        d.setWindowTitle(_('Electrum Plugins'))
+        d.setWindowTitle(_('Shuttle Plugins'))
         d.setModal(1)
 
         vbox = QVBoxLayout(d)

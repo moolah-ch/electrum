@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Shuttle - lightweight Dogecoin client
 # Copyright (C) 2013 ecdsa@github
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
-from electrum.i18n import _
-from electrum import mnemonic
+from shuttle.i18n import _
+from shuttle import mnemonic
 from qrcodewidget import QRCodeWidget
 from util import close_button
 
@@ -28,7 +28,7 @@ class SeedDialog(QDialog):
     def __init__(self, parent, seed, imported_keys):
         QDialog.__init__(self, parent)
         self.setModal(1)
-        self.setWindowTitle('Electrum' + ' - ' + _('Seed'))
+        self.setWindowTitle('Shuttle' + ' - ' + _('Seed'))
         self.parent = parent
 
         vbox = make_seed_dialog(seed, imported_keys)
@@ -41,7 +41,7 @@ class PrivateKeysDialog(QDialog):
     def __init__(self, parent, private_keys):
         QDialog.__init__(self, parent)
         self.setModal(1)
-        self.setWindowTitle('Electrum' + ' - ' + _('Master Private Keys'))
+        self.setWindowTitle('Shuttle' + ' - ' + _('Master Private Keys'))
         self.parent = parent
         vbox = QVBoxLayout(self)
         vbox.addWidget(QLabel(_("The seed has been removed from the wallet. It contains the following master private keys")+ ":"))
